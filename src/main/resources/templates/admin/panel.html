@@ -46,7 +46,9 @@
                     <td th:text="${#temporals.format(e.fechaHora, 'dd/MM/yyyy HH:mm')}"></td>
                     <td>
                         <a th:href="@{/admin/evento/editar/{id}(id=${e.id})}" class="btn-secondary" style="padding: 0.2rem 0.5rem; font-size: 0.8rem;">Editar</a>
-                        <a th:href="@{/admin/evento/eliminar/{id}(id=${e.id})}" class="btn-logout" style="padding: 0.2rem 0.5rem; font-size: 0.8rem;" onclick="return confirm('¿Seguro que deseas eliminar este evento?');">Eliminar</a>
+                        <form method="post" th:action="@{/admin/evento/eliminar/{id}(id=${e.id})}">
+                            <button type="submit" class="btn-logout">Eliminar</button>
+                        </form>
                     </td>
                 </tr>
             </tbody>
@@ -82,7 +84,9 @@
                             </select>
                             <button type="submit" class="btn-primary" style="padding: 0.2rem 0.5rem; font-size: 0.8rem;">Asignar Rol</button>
                         </form>
-                        <a th:href="@{/admin/usuario/eliminar/{id}(id=${u.id})}" class="btn-logout" style="padding: 0.2rem 0.5rem; font-size: 0.8rem;" onclick="return confirm('¿Seguro que deseas eliminar esta cuenta?');">Eliminar</a>
+                        <form method="post" th:action="@{/admin/usuario/eliminar/{id}(id=${u.id})}">
+                            <button type="submit" class="btn-logout">Eliminar</button>
+                        </form>
                     </td>
                 </tr>
             </tbody>

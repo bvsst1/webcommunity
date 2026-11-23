@@ -14,7 +14,7 @@ public class HomeController {
         this.eventoService = eventoService;
     }
 
-    @GetMapping({"/", "/home"})
+    @GetMapping({"/", "/home", "/gamer"})
     public String home(Model model) {
         model.addAttribute("eventosProximos", eventoService.listarProximos());
         return "home";

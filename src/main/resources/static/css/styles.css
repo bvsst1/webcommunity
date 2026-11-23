@@ -176,3 +176,16 @@ footer {
     margin-top: 3rem;
     font-size: 0.85rem;
 }
+.detalle-info img,
+.detalle-info video {
+    display: block;
+    max-width: 100%;
+    max-height: 24rem;
+}
+
+.detalle-info textarea {
+    display: block;
+    width: 100%;
+    margin-block: 0.5rem;
+    resize: vertical;
+}

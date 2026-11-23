@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title th:text="${evento.nombre} + ' - Gamer Community'">Detalle</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <script th:src="@{/js/compartir-evento.js}" defer></script>
 </head>
 <body>
 
@@ -70,7 +72,66 @@
         <li th:if="${evento.tieneAlojamiento}">✅ Alojamiento</li>
     </ul>
 
-    <a th:href="@{/eventos}" class="btn-secondary">← Volver a eventos</a>
+    <section class="detalle-info" th:unless="${vistaCompartida}">
+        <h2>Multimedia</h2>
+        <p th:if="${#lists.isEmpty(archivos)}">Este evento todavía no tiene fotos ni videos.</p>
+        <figure th:each="archivo : ${archivos}">
+            <img th:if="${archivo.tipo.startsWith('image/')}" alt="Foto del evento" loading="lazy"
+                 th:src="@{/eventos/{evento}/multimedia/{archivo}(evento=${evento.id},archivo=${archivo.id})}">
+            <video th:if="${archivo.tipo == 'video/mp4'}" controls preload="metadata"
+                   th:src="@{/eventos/{evento}/multimedia/{archivo}(evento=${evento.id},archivo=${archivo.id})}"></video>
+        </figure>
+        <form sec:authorize="hasRole('ADMIN')" method="post" enctype="multipart/form-data"
+              th:action="@{/eventos/{id}/multimedia(id=${evento.id})}">
+            <label for="archivo">Agregar foto o video (máximo 7 MB)</label>
+            <input id="archivo" name="archivo" type="file" accept="image/png,image/jpeg,video/mp4" required>
+            <button class="btn-secondary" type="submit">Subir archivo</button>
+        </form>
+    </section>
+
+    <section class="detalle-info" th:unless="${vistaCompartida}">
+        <h2>Valoración</h2>
+        <p th:if="${promedio == null}">Todavía no hay valoraciones.</p>
+        <p th:if="${promedio != null}" th:text="|${#numbers.formatDecimal(promedio, 1, 1)} de 5|"></p>
+        <form method="post" th:action="@{/eventos/{id}/valoracion(id=${evento.id})}">
+            <label for="puntaje">Tu valoración</label>
+            <select id="puntaje" name="puntaje" required>
+                <option value="">Selecciona un puntaje</option>
+                <option th:each="numero : ${#numbers.sequence(1,5)}" th:value="${numero}" th:text="${numero}"></option>
+            </select>
+            <button class="btn-secondary" type="submit">Guardar valoración</button>
+        </form>
+    </section>
+
+    <section class="detalle-info" th:unless="${vistaCompartida}">
+        <h2>Comentarios</h2>
+        <form method="post" th:action="@{/eventos/{id}/comentarios(id=${evento.id})}">
+            <label for="texto">Escribe un comentario</label>
+            <textarea id="texto" name="texto" rows="3" maxlength="1000" required></textarea>
+            <button class="btn-secondary" type="submit">Publicar comentario</button>
+        </form>
+        <p th:if="${#lists.isEmpty(comentarios)}">Sé la primera persona en comentar.</p>
+        <article th:each="comentario : ${comentarios}">
+            <strong th:text="${comentario.autor}"></strong>
+            <p th:text="${comentario.texto}"></p>
+        </article>
+    </section>
+
+    <section class="detalle-info" th:unless="${vistaCompartida}">
+        <h2>Compartir evento</h2>
+        <form th:unless="${evento.compartido}" method="post" th:action="@{/eventos/{id}/compartir(id=${evento.id})}">
+            <button class="btn-secondary" type="submit">Compartir en Gamer Community</button>
+        </form>
+        <div th:if="${evento.compartido}">
+            <p>Este evento aparece en el listado de eventos compartidos.</p>
+            <a id="enlace-publico" th:href="@{/eventos/compartidos/{id}(id=${evento.id})}">Ver enlace público</a>
+            <a data-red="facebook" target="_blank" rel="noopener noreferrer" hidden>Compartir en Facebook</a>
+            <a data-red="whatsapp" target="_blank" rel="noopener noreferrer" hidden>Compartir por WhatsApp</a>
+        </div>
+    </section>
+
+    <a th:if="${vistaCompartida}" th:href="@{/eventos/compartidos}" class="btn-secondary">Ver eventos compartidos</a>
+    <a th:unless="${vistaCompartida}" th:href="@{/eventos}" class="btn-secondary">Volver a eventos</a>
 </main>
 
 </body>

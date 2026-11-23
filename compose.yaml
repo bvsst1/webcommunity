@@ -1,0 +1,39 @@
+services:
+  app:
+    build: .
+    ports:
+      - "${APP_PORT:-80}:8080"
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/gamer_events
+      DB_USERNAME: gamercommunity
+      DB_PASSWORD: ${DB_PASSWORD:?Define DB_PASSWORD}
+      APP_JWT_SECRET: ${APP_JWT_SECRET:?Define APP_JWT_SECRET}
+      APP_DEMO_ENABLED: ${APP_DEMO_ENABLED:-false}
+      DEMO_ADMIN_PASSWORD: ${DEMO_ADMIN_PASSWORD:-}
+      DEMO_USUARIO_PASSWORD: ${DEMO_USUARIO_PASSWORD:-}
+      DEMO_USUARIO2_PASSWORD: ${DEMO_USUARIO2_PASSWORD:-}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: gamer_events
+      MYSQL_USER: gamercommunity
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Define DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Define MYSQL_ROOT_PASSWORD}
+    volumes:
+      - datos-mysql:/var/lib/mysql
+      - ./game_event.sql:/docker-entrypoint-initdb.d/01-gamer-events.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysql --protocol=TCP -h 127.0.0.1 -u \"$${MYSQL_USER}\" -p\"$${MYSQL_PASSWORD}\" -D \"$${MYSQL_DATABASE}\" -e 'SELECT 1' >/dev/null 2>&1"]
+      interval: 5s
+      timeout: 5s
+      start_period: 120s
+      retries: 20
+    restart: unless-stopped
+
+volumes:
+  datos-mysql:

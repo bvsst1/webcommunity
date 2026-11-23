@@ -1,18 +1,4 @@
--- =====================================
--- CREAR USUARIO ADMINISTRADOR DE MYSQL
--- =====================================
-
-CREATE USER IF NOT EXISTS 'sumativa1'@'localhost'
-IDENTIFIED BY 'DuocUc123';
-
--- Dar permisos completos sobre todas las bases de datos
-GRANT ALL PRIVILEGES ON *.* TO 'sumativa1'@'localhost'
-WITH GRANT OPTION;
-
-
-DROP DATABASE IF EXISTS gamer_events;
-
-CREATE DATABASE gamer_events
+CREATE DATABASE IF NOT EXISTS gamer_events
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
 
@@ -36,6 +22,7 @@ CREATE TABLE roles (
 CREATE TABLE usuarios (
     id BIGINT NOT NULL AUTO_INCREMENT,
     username VARCHAR(100) NOT NULL,
+    nombre_completo VARCHAR(120),
     email VARCHAR(150) NOT NULL,
     password VARCHAR(255) NOT NULL,
     avatar_url VARCHAR(500) DEFAULT NULL,
@@ -79,10 +66,39 @@ CREATE TABLE eventos (
     tiene_locomocion BOOLEAN NOT NULL DEFAULT FALSE,
     tiene_comidas BOOLEAN NOT NULL DEFAULT FALSE,
     tiene_alojamiento BOOLEAN NOT NULL DEFAULT FALSE,
+    compartido BOOLEAN NOT NULL DEFAULT FALSE,
     PRIMARY KEY (id),
     KEY idx_eventos_categoria (categoria),
     KEY idx_eventos_fecha (fecha_hora),
     KEY idx_eventos_direccion (direccion)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE comentarios_evento (
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    evento_id BIGINT NOT NULL,
+    usuario_id BIGINT NOT NULL,
+    texto VARCHAR(1000) NOT NULL,
+    fecha DATETIME NOT NULL,
+    FOREIGN KEY (evento_id) REFERENCES eventos(id) ON DELETE CASCADE,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE valoraciones_evento (
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    evento_id BIGINT NOT NULL,
+    usuario_id BIGINT NOT NULL,
+    puntaje INT NOT NULL CHECK (puntaje BETWEEN 1 AND 5),
+    UNIQUE (evento_id, usuario_id),
+    FOREIGN KEY (evento_id) REFERENCES eventos(id) ON DELETE CASCADE,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE multimedia_evento (
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    evento_id BIGINT NOT NULL,
+    tipo VARCHAR(25) NOT NULL,
+    contenido MEDIUMBLOB NOT NULL,
+    FOREIGN KEY (evento_id) REFERENCES eventos(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =====================================

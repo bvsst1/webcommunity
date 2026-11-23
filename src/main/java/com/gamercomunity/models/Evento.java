@@ -1,6 +1,7 @@
 package com.gamercomunity.models;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.ColumnDefault;
 import java.time.LocalDateTime;
 
 @Entity
@@ -44,6 +45,10 @@ public class Evento {
     @Column(name = "tiene_alojamiento", nullable = false)
     private boolean tieneAlojamiento = false;
 
+    @Column(nullable = false)
+    @ColumnDefault("false")
+    private boolean compartido = false;
+
     public Evento() {}
 
     public Long getId() { return id; }
@@ -81,4 +86,7 @@ public class Evento {
 
     public boolean isTieneAlojamiento() { return tieneAlojamiento; }
     public void setTieneAlojamiento(boolean tieneAlojamiento) { this.tieneAlojamiento = tieneAlojamiento; }
+
+    public boolean isCompartido() { return compartido; }
+    public void setCompartido(boolean compartido) { this.compartido = compartido; }
 }

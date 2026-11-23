@@ -7,6 +7,7 @@ import com.gamercomunity.repository.RolRepository;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -20,18 +21,19 @@ public class DataInitializer {
     CommandLineRunner initUsuarios(
             UsuarioRepository usuarioRepository,
             RolRepository rolRepository,
-            PasswordEncoder passwordEncoder) {
+            PasswordEncoder passwordEncoder, Environment environment) {
 
         return args -> {
 
             // Buscar roles existentes
             Rol rolUser = rolRepository.findByNombre("ROLE_USER")
-                    .orElseThrow(() ->
-                            new RuntimeException("No existe ROLE_USER"));
-
+                    .orElseGet(() -> rolRepository.save(new Rol("ROLE_USER")));
             Rol rolAdmin = rolRepository.findByNombre("ROLE_ADMIN")
-                    .orElseThrow(() ->
-                            new RuntimeException("No existe ROLE_ADMIN"));
+                    .orElseGet(() -> rolRepository.save(new Rol("ROLE_ADMIN")));
+
+            if (!environment.getProperty("app.demo.enabled", Boolean.class, false)) {
+                return;
+            }
 
             // Crear ADMIN
             if (!usuarioRepository.existsByUsername("admin")) {
@@ -40,7 +42,7 @@ public class DataInitializer {
 
                 admin.setUsername("admin");
                 admin.setEmail("gamer3@example.com");
-                admin.setPassword(passwordEncoder.encode("admin"));
+                admin.setPassword(passwordEncoder.encode(environment.getRequiredProperty("DEMO_ADMIN_PASSWORD")));
                 admin.setAvatarUrl(
                         "https://api.dicebear.com/7.x/bottts/svg?seed=admin");
                 admin.setJuegosInteres(
@@ -64,7 +66,7 @@ public class DataInitializer {
 
                 lmarin.setUsername("usuario");
                 lmarin.setEmail("gamer1@example.com");
-                lmarin.setPassword(passwordEncoder.encode("usuario"));
+                lmarin.setPassword(passwordEncoder.encode(environment.getRequiredProperty("DEMO_USUARIO_PASSWORD")));
                 lmarin.setAvatarUrl(
                         "https://api.dicebear.com/7.x/bottts/svg?seed=gamer1");
                 lmarin.setJuegosInteres(
@@ -84,7 +86,7 @@ public class DataInitializer {
 
                 usuario.setUsername("usuario2");
                 usuario.setEmail("gamer2@example.com");
-                usuario.setPassword(passwordEncoder.encode("usuario2"));
+                usuario.setPassword(passwordEncoder.encode(environment.getRequiredProperty("DEMO_USUARIO2_PASSWORD")));
                 usuario.setAvatarUrl(
                         "https://api.dicebear.com/7.x/bottts/svg?seed=gamer2");
                 usuario.setJuegosInteres(

@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Registro - Gamer Community</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
@@ -10,17 +11,20 @@
 <div class="auth-box">
     <h2>Crear cuenta</h2>
 
-    <p class="msg error" th:if="${error}" th:text="${error}"></p>
+    <p class="msg error" role="alert" th:if="${error}" th:text="${error}"></p>
 
     <form th:action="@{/registro}" method="post" th:object="${usuario}">
-        <label>Nombre de usuario</label>
-        <input type="text" th:field="*{username}" required>
+        <label for="nombreCompleto">Nombre completo</label>
+        <input type="text" th:field="*{nombreCompleto}" autocomplete="name" maxlength="120" required>
 
-        <label>Correo electrónico</label>
-        <input type="email" th:field="*{email}" required>
+        <label for="username">Nombre de usuario</label>
+        <input type="text" th:field="*{username}" autocomplete="username" minlength="3" maxlength="20" required>
 
-        <label>Contraseña</label>
-        <input type="password" th:field="*{password}" required>
+        <label for="email">Correo electrónico</label>
+        <input type="email" th:field="*{email}" autocomplete="email" maxlength="150" required>
+
+        <label for="password">Contraseña</label>
+        <input type="password" id="password" name="password" autocomplete="new-password" maxlength="72" required>
 
         <button type="submit" class="btn-primary">Registrarme</button>
     </form>

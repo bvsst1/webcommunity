@@ -1,6 +1,7 @@
 package com.gamercomunity.service;
 
 import com.gamercomunity.models.Rol;
+import com.gamercomunity.dto.PerfilForm;
 import com.gamercomunity.models.Usuario;
 import com.gamercomunity.repository.RolRepository;
 import com.gamercomunity.repository.UsuarioRepository;
@@ -28,10 +29,10 @@ public class UsuarioService {
 
     public Usuario registrar(Usuario usuario) {
         if (usuarioRepository.existsByUsername(usuario.getUsername())) {
-            throw new RuntimeException("El nombre de usuario ya existe");
+            throw new IllegalArgumentException("El nombre de usuario ya existe");
         }
         if (usuarioRepository.existsByEmail(usuario.getEmail())) {
-            throw new RuntimeException("El correo ya está registrado");
+            throw new IllegalArgumentException("El correo ya está registrado");
         }
 
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
@@ -46,14 +47,14 @@ public class UsuarioService {
         return usuarioRepository.save(usuario);
     }
 
-    public Usuario actualizarPerfil(String username, Usuario datos) {
+    public Usuario actualizarPerfil(String username, PerfilForm datos) {
         Usuario existente = usuarioRepository.findByUsername(username)
             .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        existente.setAvatarUrl(datos.getAvatarUrl());
-        existente.setJuegosInteres(datos.getJuegosInteres());
-        existente.setNotificarEmail(datos.isNotificarEmail());
-        existente.setNotificarPush(datos.isNotificarPush());
+        existente.setAvatarUrl(datos.avatarUrl());
+        existente.setJuegosInteres(datos.juegosInteres());
+        existente.setNotificarEmail(Boolean.TRUE.equals(datos.notificarEmail()));
+        existente.setNotificarPush(Boolean.TRUE.equals(datos.notificarPush()));
 
         return usuarioRepository.save(existente);
     }

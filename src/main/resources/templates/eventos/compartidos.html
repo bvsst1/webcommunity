@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Eventos compartidos - Gamer Community</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<header class="navbar">
+    <a class="logo" th:href="@{/home}">Gamer Community</a>
+</header>
+<main class="detalle-main">
+    <h1>Eventos compartidos</h1>
+    <p th:if="${#lists.isEmpty(eventos)}">Aún no hay eventos compartidos.</p>
+    <div class="eventos-grid">
+        <article class="card" th:each="evento : ${eventos}">
+            <h2 th:text="${evento.nombre}"></h2>
+            <p th:text="${evento.direccion}"></p>
+            <a class="btn-secondary" th:href="@{/eventos/compartidos/{id}(id=${evento.id})}">Ver evento</a>
+        </article>
+    </div>
+</main>
+</body>
+</html>

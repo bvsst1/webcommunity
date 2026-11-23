@@ -1,6 +1,7 @@
 package com.gamercomunity.controllers;
 
 import com.gamercomunity.models.Usuario;
+import com.gamercomunity.dto.PerfilForm;
 import com.gamercomunity.service.UsuarioService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -25,7 +26,7 @@ public class PerfilController {
     }
 
     @PostMapping
-    public String actualizarPerfil(Authentication auth, @ModelAttribute Usuario datos) {
+    public String actualizarPerfil(Authentication auth, @ModelAttribute PerfilForm datos) {
         usuarioService.actualizarPerfil(auth.getName(), datos);
         return "redirect:/perfil?actualizado";
     }

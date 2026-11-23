@@ -3,6 +3,7 @@ package com.gamercomunity.controllers;
 import com.gamercomunity.models.Evento;
 import com.gamercomunity.service.EventoService;
 import com.gamercomunity.service.UsuarioService;
+import com.gamercomunity.dto.EventoForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -39,18 +40,18 @@ public class AdminController {
     }
 
     @PostMapping("/evento/guardar")
-    public String guardarEvento(@ModelAttribute Evento evento) {
-        eventoService.guardar(evento);
+    public String guardarEvento(@ModelAttribute EventoForm evento) {
+        eventoService.guardar(evento.toEvento());
         return "redirect:/admin";
     }
 
-    @GetMapping("/evento/eliminar/{id}")
+    @PostMapping("/evento/eliminar/{id}")
     public String eliminarEvento(@PathVariable Long id) {
         eventoService.eliminar(id);
         return "redirect:/admin";
     }
 
-    @GetMapping("/usuario/eliminar/{id}")
+    @PostMapping("/usuario/eliminar/{id}")
     public String eliminarUsuario(@PathVariable Long id) {
         usuarioService.eliminarUsuario(id);
         return "redirect:/admin";
